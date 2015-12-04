@@ -22,7 +22,6 @@
   },
   "homepage": "https://github.com/taskulu/tweelead",
   "dependencies": {
-    "aylien_textapi": "latest",
     "google-spreadsheet": "latest",
     "ini": "latest",
     "twitter-stream-channels": "latest"
@@ -31,7 +30,7 @@
     "node": "0.10.x"
   },
   "scripts": {
-    "start": "node index_old.js"
+    "start": "nodejs index.js"
   }
 
 }
