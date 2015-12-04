@@ -1,0 +1,37 @@
+{
+  "name": "Tweelead",
+  "version": "0.1.0",
+  "description": "Generate actionable leads from Twitter in real-time",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/taskulu/tweelead"
+  },
+  "keywords": [
+    "marketing",
+    "sentiment analysis",
+    "social"
+  ],
+  "author": "Taskulu",
+  "contributors": [
+    "Farhad Hedayati"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/taskulu/tweelead/issues"
+  },
+  "homepage": "https://github.com/taskulu/tweelead",
+  "dependencies": {
+    "aylien_textapi": "latest",
+    "google-spreadsheet": "latest",
+    "ini": "latest",
+    "twitter-stream-channels": "latest"
+  },
+  "engines": {
+    "node": "0.10.x"
+  },
+  "scripts": {
+    "start": "node index_old.js"
+  }
+
+}
