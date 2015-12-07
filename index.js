@@ -38,8 +38,9 @@ function logTweetToGoogle(tweet, category) {
   my_sheet.useServiceAccountAuth(creds, function(err){
     // getInfo returns info about the sheet and an array or "worksheet" objects
     my_sheet.getInfo( function( err, sheet_info ){
-        console.log( sheet_info.title + ' is loaded' );
-          // use worksheet object if you want to stop using the # in your calls
+        if((sheet_info !== undefined) && (sheet_info !== null)){
+          console.log( sheet_info.title + ' is loaded' );
+        }
       });
 
     if(category === 'general'){
