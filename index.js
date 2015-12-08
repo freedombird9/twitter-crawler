@@ -18,7 +18,8 @@ var channels = {
   "hawaii": config.KW_HAWAII,
   "sam": config.KW_SAM,
   "SF": config.KW_SF,
-  "carlos": config.KW_CARLOS
+  "carlos": config.KW_CARLOS,
+  "weather_app": config.KW_WEATHER_APP
 };
 
 var stream = client.streamChannels({track:channels});
@@ -65,6 +66,10 @@ function logTweetToGoogle(tweet, category) {
       my_sheet.addRow(5, {
         text: tweet.text, url: "https://twitter.com/" + tweet.user.screen_name + '/status/' + tweet.id_str, followers: tweet.user.followers_count, username: tweet.user.screen_name, createdAt: tweet.created_at
       }, handleError);
+    } else if(category === 'weather_app'){
+      my_sheet.addRow(6, {
+        text: tweet.text, url: "https://twitter.com/" + tweet.user.screen_name + '/status/' + tweet.id_str, followers: tweet.user.followers_count, username: tweet.user.screen_name, createdAt: tweet.created_at
+      }, handleError);
     }
   });
 }
@@ -87,6 +92,10 @@ stream.on('channels/sam', function(tweet){
 
 stream.on('channels/carlos', function(tweet){
   logTweetToGoogle(tweet, 'carlos');
+});
+
+stream.on('channels/weather_app', function(tweet){
+  logTweetToGoogle(tweet, 'weather_app');
 });
 
 // setTimeout(function(){
