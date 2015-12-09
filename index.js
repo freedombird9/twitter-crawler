@@ -1,10 +1,24 @@
 var Twitter           = require('twitter-stream-channels'),
     fs                = require('fs'),
     GoogleSpreadsheet = require("google-spreadsheet"),
+    AYLIENTextAPI     = require("aylien_textapi"),
     ini               = require('ini');
 
 var config = ini.parse(fs.readFileSync('./config.ini', 'utf-8'));
 
+const POLARITY_OPTIONS = {
+  // Do not show any positive tweets.
+  positive: 0,
+  // Show all the negative tweets.
+  negative: 1,
+  // Show neutral tweets with at most 65% confidence.
+  neutral: 0.65
+};
+
+var textapi = new AYLIENTextAPI({
+  application_id: config.AYLIEN_APP_ID,
+  application_key: config.AYLIEN_APP_KEY
+});
 
 var client = new Twitter({
   "consumer_key": config.TW_CONSUMER_KEY,
@@ -32,6 +46,20 @@ function handleError(err) {
     return true;
   }
   return false;
+}
+
+function measureSentiment(tweet) {
+  textapi.sentiment({"text": tweet.text}, function(error, response) {
+    if (handleError(error)) return;
+
+    for (polarity in POLARITY_OPTIONS) {
+      if (POLARITY_OPTIONS[polarity] > 0.5) {
+        if (response.polarity == polarity && response.polarity_confidence <= POLARITY_OPTIONS[polarity]) {
+          logTweetToGoogle(tweet, response);
+        }
+      }
+    }
+  });
 }
 
 function logTweetToGoogle(tweet, category) {
@@ -66,9 +94,9 @@ function logTweetToGoogle(tweet, category) {
       my_sheet.addRow(5, {
         text: tweet.text, url: "https://twitter.com/" + tweet.user.screen_name + '/status/' + tweet.id_str, followers: tweet.user.followers_count, username: tweet.user.screen_name, createdAt: tweet.created_at
       }, handleError);
-    } else if(category === 'weather_app'){
+    } else {
       my_sheet.addRow(6, {
-        text: tweet.text, url: "https://twitter.com/" + tweet.user.screen_name + '/status/' + tweet.id_str, followers: tweet.user.followers_count, username: tweet.user.screen_name, createdAt: tweet.created_at
+        text: tweet.text, url: "https://twitter.com/" + tweet.user.screen_name + '/status/' + tweet.id_str, followers: tweet.user.followers_count, username: tweet.user.screen_name, createdAt: tweet.created_at, polarity: category.polarity, confidence: Math.round(category.polarity_confidence*100)/100
       }, handleError);
     }
   });
@@ -95,7 +123,7 @@ stream.on('channels/carlos', function(tweet){
 });
 
 stream.on('channels/weather_app', function(tweet){
-  logTweetToGoogle(tweet, 'weather_app');
+  measureSentiment(tweet);
 });
 
 // setTimeout(function(){
